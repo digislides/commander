@@ -1,21 +1,31 @@
-class CommanderRoutes {
-  Future<void> takeScreenshot() async {
-    // TODO
+import 'dart:io';
+import 'package:path/path.dart' as path;
+import 'package:crossplat_objectid/crossplat_objectid.dart';
+
+import 'package:dscript_exec/dscript_exec.dart' as ds;
+
+class Commander {
+  final Directory tempDir;
+
+  Commander._(this.tempDir) {}
+
+  Future<String> takeScreenShot() async {
+    final p =
+        path.join(tempDir.path, "scrots", ObjectId().toHexString() + ".png");
+    await ds.exec("import", ['-window', 'root', p]).run();
+    return p;
   }
 
   Future<void> reboot() async {
-    // TODO
+    await ds.exec("reboot").run();
   }
 
-  Future<void> getTime() async {
-    // TODO
+  Future<void> exec(String executable, List<String> args) async {
+    await ds.exec(executable, args).run();
   }
 
-  Future<void> setTime() async {
-    // TODO
-  }
-
-  Future<void> exec() async {
-    // TODO
+  static Future<Commander> make() async {
+    final dir = await Directory.systemTemp.createTemp('cmd');
+    return Commander._(dir);
   }
 }
