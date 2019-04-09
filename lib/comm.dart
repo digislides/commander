@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'dart:convert';
-import 'package:crypto/crypto.dart';
 
 import 'commander.dart';
 
@@ -17,9 +16,12 @@ Future<void> comm(Config config) async {
   final conn = await WebSocket.connect(
       "ws://localhost:10000/api/commander/${config.id}");
 
-  final enc = Hmac(sha256, config.password.codeUnits);
-
   final commander = await Commander.make();
+
+  conn.add(jsonEncode({
+    "repcmd": "auth",
+    "pwd": "1234as",
+  }));
 
   conn.listen((v) async {
     if (v is! String) return;
@@ -61,12 +63,6 @@ Future<void> comm(Config config) async {
       });
     } else if (cmd == "reboot") {
       await commander.reboot();
-    } else if (cmd == "auth") {
-      conn.add(jsonEncode({
-        "id": map["id"],
-        "repcmd": cmd,
-        "reply": enc.convert(map["challenge"]).bytes,
-      }));
     } else if (cmd == "auth_fail") {
       // TODO
     }
