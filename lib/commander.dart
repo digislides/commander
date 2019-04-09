@@ -20,8 +20,8 @@ class Commander {
     await ds.exec("reboot").run();
   }
 
-  Future<void> exec(String executable, List<String> args) async {
-    await ds.exec(executable, args).run();
+  Future<Process> exec(String command) async {
+    return Process.start("bash", ["-c", '"$command"']);
   }
 
   static Future<Commander> make() async {
