@@ -26,41 +26,48 @@ Future<void> comm(Config config) async {
 
     final map = json.decode(v);
 
-    if (map["cmd"] == "screencast") {
+    final cmd = map["cmd"];
+
+    if (cmd == "screencast") {
       final path = await commander.takeScreenShot();
       final bytes = await File(path).readAsBytes();
       conn.add(json.encode({
         "id": map["id"],
+        "repcmd": cmd,
         "file": bytes,
       }));
-    } else if (map["cmd"] == "exec") {
+    } else if (cmd == "exec") {
       final process = await commander.exec(map["command"]);
       process.stdout.listen((d) {
         conn.add(jsonEncode({
           "id": map["id"],
+          "repcmd": cmd,
           "stdout": d,
         }));
       });
       process.stderr.listen((d) {
         conn.add(jsonEncode({
           "id": map["id"],
+          "repcmd": cmd,
           "stderr": d,
         }));
       });
       process.exitCode.then((c) {
         conn.add(jsonEncode({
           "id": map["id"],
+          "repcmd": cmd,
           "exitCode": c,
         }));
       });
-    } else if (map["cmd"] == "reboot") {
+    } else if (cmd == "reboot") {
       await commander.reboot();
-    } else if (map["cmd"] == "auth") {
+    } else if (cmd == "auth") {
       conn.add(jsonEncode({
         "id": map["id"],
+        "repcmd": cmd,
         "reply": enc.convert(map["challenge"]).bytes,
       }));
-    } else if (map["cmd"] == "auth_fail") {
+    } else if (cmd == "auth_fail") {
       // TODO
     }
   });
