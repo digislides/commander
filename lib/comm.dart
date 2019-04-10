@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:async';
 
 import 'dart:convert';
 
@@ -23,10 +24,18 @@ Future<void> comm(Config config) async {
     "pwd": "1234as",
   }));
 
+  final heartbeat = Timer.periodic(Duration(minutes: 1), (_) async {
+    conn.add(jsonEncode({
+      "repcmd": "hb",
+    }));
+  });
+
   conn.listen((v) async {
     if (v is! String) return;
 
     final map = json.decode(v);
+
+    print(map);
 
     final cmd = map["cmd"];
 
