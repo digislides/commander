@@ -12,7 +12,11 @@ class Commander {
   Future<String> takeScreenShot() async {
     final p =
         path.join(tempDir.path, "scrots", ObjectId().toHexString() + ".png");
-    await ds.exec("import", ['-window', 'root', p]).run();
+    try {
+      final res = await Process.run('import', ['-window', 'root', p]);
+    } catch(e) {
+      print(e);
+    }
     return p;
   }
 
@@ -26,6 +30,7 @@ class Commander {
 
   static Future<Commander> make() async {
     final dir = await Directory.systemTemp.createTemp('cmd');
+    await Directory(path.join(dir.path, "scrots")).create(recursive: true);
     return Commander._(dir);
   }
 }

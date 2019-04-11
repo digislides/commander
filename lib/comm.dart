@@ -39,7 +39,7 @@ Future<void> comm(Config config) async {
 
     final cmd = map["cmd"];
 
-    if (cmd == "screencast") {
+    if (cmd == "screenshot") {
       final path = await commander.takeScreenShot();
       final bytes = await File(path).readAsBytes();
       conn.add(json.encode({
