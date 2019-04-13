@@ -48,28 +48,33 @@ Future<void> comm(Config config) async {
         "file": bytes,
       }));
     } else if (cmd == "exec") {
-      final process = await commander.exec(map["command"]);
-      process.stdout.listen((d) {
-        conn.add(jsonEncode({
-          "id": map["id"],
-          "repcmd": cmd,
-          "stdout": d,
-        }));
-      });
-      process.stderr.listen((d) {
-        conn.add(jsonEncode({
-          "id": map["id"],
-          "repcmd": cmd,
-          "stderr": d,
-        }));
-      });
-      process.exitCode.then((c) {
-        conn.add(jsonEncode({
-          "id": map["id"],
-          "repcmd": cmd,
-          "exitCode": c,
-        }));
-      });
+      try {
+        final process = await commander.exec(map["command"]);
+        process.stdout.listen((d) {
+          conn.add(jsonEncode({
+            "id": map["id"],
+            "repcmd": cmd,
+            "stdout": utf8.decode(d),
+          }));
+        });
+        process.stderr.listen((d) {
+          conn.add(jsonEncode({
+            "id": map["id"],
+            "repcmd": cmd,
+            "stderr": utf8.decode(d),
+          }));
+        });
+        process.exitCode.then((c) {
+          conn.add(jsonEncode({
+            "id": map["id"],
+            "repcmd": cmd,
+            "exitCode": c,
+          }));
+        });
+      } catch (e) {
+        print(e);
+        // TODO
+      }
     } else if (cmd == "reboot") {
       await commander.reboot();
     } else if (cmd == "auth_fail") {

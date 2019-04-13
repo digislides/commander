@@ -2,7 +2,9 @@ import 'dart:io';
 import 'package:path/path.dart' as path;
 import 'package:crossplat_objectid/crossplat_objectid.dart';
 
-import 'package:dscript_exec/dscript_exec.dart' as ds;
+import 'package:args/args.dart';
+
+import 'package:commandline_splitter/commandline_splitter.dart' as commandline;
 
 class Commander {
   final Directory tempDir;
@@ -14,18 +16,20 @@ class Commander {
         path.join(tempDir.path, "scrots", ObjectId().toHexString() + ".png");
     try {
       final res = await Process.run('import', ['-window', 'root', p]);
-    } catch(e) {
+    } catch (e) {
       print(e);
     }
     return p;
   }
 
   Future<void> reboot() async {
-    await ds.exec("reboot").run();
+    await Process.run("reboot", []);
   }
 
   Future<Process> exec(String command) async {
-    return Process.start("bash", ["-c", '"$command"']);
+    final cmd = commandline.split(command);
+    return Process.start(
+        cmd.first, cmd.length >= 2 ? cmd.sublist(1).toList() : []);
   }
 
   static Future<Commander> make() async {

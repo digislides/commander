@@ -9,10 +9,9 @@ environment:
 
 dependencies:
   crossplat_objectid:
+  commandline_splitter: ^1.5.2
 
 dev_dependencies:
   test:
 
 dependency_overrides:
-  dscript_exec:
-    path: ../../dart/dscript_exec
