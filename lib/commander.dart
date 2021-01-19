@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:path/path.dart' as path;
 import 'package:crossplat_objectid/crossplat_objectid.dart';
 
-import 'package:args/args.dart';
 
 import 'package:commandline_splitter/commandline_splitter.dart' as commandline;
 
